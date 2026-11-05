@@ -16,13 +16,23 @@ const apiProxy = rawProxy
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: path.join(__dirname),
+  // FastAPI owns trailing-slash policy for /api/*. Without this, Next.js
+  // answers /api/accounts/ with a 308 to /api/accounts while FastAPI answers
+  // /api/accounts with a 307 to /api/accounts/, which ping-pongs forever.
+  skipTrailingSlashRedirect: true,
   eslint: {
     // The project keeps lint separate from the production build.
     ignoreDuringBuilds: true,
   },
   async rewrites() {
     if (!apiProxy) return [];
-    return [{ source: "/api/:path*", destination: `${apiProxy}/api/:path*` }];
+    // The trailing-slash rule comes first because `:path*` drops the trailing
+    // slash. FastAPI treats /api/accounts/ as canonical and redirects
+    // /api/accounts to it, so both forms must reach the backend unchanged.
+    return [
+      { source: "/api/:path*/", destination: `${apiProxy}/api/:path*/` },
+      { source: "/api/:path*", destination: `${apiProxy}/api/:path*` },
+    ];
   },
 };
 

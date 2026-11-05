@@ -35,6 +35,14 @@ def test_unauthenticated_requests_are_rejected(client):
     assert client.get("/api/transactions/").status_code == 401
 
 
+def test_trailing_slash_redirect_is_relative(client):
+    # Behind the Next.js /api rewrite an absolute 127.0.0.1 Location would
+    # escape the public origin, so FastAPI's slash redirect must stay relative.
+    response = client.get("/api/accounts", follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["location"].startswith("/api/accounts")
+
+
 def test_account_crud(bootstrapped):
     client = bootstrapped
     payload = {"account_number": "ACC9001", "account_holder": "Test User", "balance": 500000}

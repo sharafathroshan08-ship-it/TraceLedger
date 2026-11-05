@@ -125,7 +125,9 @@ cd ..\frontend
 npm.cmd run test:e2e
 ```
 
-See `docs/testing.md` for browser channel notes and the manual checklist.
+See `docs/testing.md` for browser channel notes and the manual checklist. To
+smoke-test a deployment, run `E2E_BASE_URL=https://your-url npm run test:e2e:live`
+from `frontend`.
 
 ## Demo dataset
 

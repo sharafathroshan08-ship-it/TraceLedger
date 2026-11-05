@@ -1,7 +1,8 @@
 import os
 from datetime import datetime
+from urllib.parse import urlsplit
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import Base, engine
@@ -33,6 +34,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def relative_redirects(request: Request, call_next):
+    """Keep redirects relative so they survive a reverse proxy.
+
+    FastAPI answers /api/accounts with 307 to /api/accounts/, and builds the
+    Location from the incoming Host header. Behind the Next.js rewrite that
+    host is the backend's internal address, so the browser would be sent to
+    127.0.0.1:8000. A relative Location resolves against the public origin.
+    """
+    response = await call_next(request)
+    location = response.headers.get("location")
+    if location:
+        parts = urlsplit(location)
+        if parts.scheme and parts.netloc:
+            response.headers["location"] = parts.path + (
+                f"?{parts.query}" if parts.query else ""
+            )
+    return response
 
 
 @app.on_event("startup")

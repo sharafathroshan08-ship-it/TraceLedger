@@ -58,6 +58,20 @@ Each test runs in a fresh browser context, which means a fresh HttpOnly cookie
 and a fresh seeded workspace. Tests never share state, and the reset test cannot
 disturb another spec.
 
+### Live deployment smoke test
+
+`e2e-live/live.spec.ts` exercises a real deployed URL (landing page, demo entry,
+dashboard counts, accounts, graph, investigations) and fails on page errors or
+any 5xx response. Point it at any deployment:
+
+```bash
+cd frontend
+E2E_BASE_URL=https://your-deployment.example npm run test:e2e:live
+```
+
+The four 401 responses it records are the intentional pre-session race: the app
+bootstraps once, retries, and renders with the seeded data.
+
 | Spec | What it proves |
 | --- | --- |
 | Landing → dashboard | The CTA bootstraps a workspace and the dashboard shows seeded counts |
