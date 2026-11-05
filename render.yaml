@@ -1,0 +1,26 @@
+# Render blueprint for the TraceLedger API.
+#
+# Render's free web services do not support persistent disks, so the default
+# SQLite file is recreated whenever the instance restarts. Point
+# TRACELEDGER_DATABASE_URL at a free Supabase Postgres database if workspaces
+# must survive deploys.
+services:
+  - type: web
+    name: traceledger-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt -r requirements-postgres.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: TRACELEDGER_COOKIE_SECURE
+        value: "true"
+      # Comma separated; fill in with the deployed Vercel origin.
+      - key: TRACELEDGER_ALLOWED_ORIGINS
+        sync: false
+      # postgresql+psycopg2://postgres:<password>@<host>:5432/postgres
+      - key: TRACELEDGER_DATABASE_URL
+        sync: false

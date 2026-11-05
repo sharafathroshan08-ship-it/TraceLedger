@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-white text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-foreground text-background;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply tracking-tight;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+
+  /* Thin, quiet scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #d4d4d8 transparent;
+  }
+  *::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: #d4d4d8;
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  .label-xs {
+    @apply text-2xs font-medium uppercase tracking-[0.14em] text-muted-foreground;
+  }
+}
+
+/* React Flow theme overrides — keep the canvas monochrome */
+.react-flow__attribution {
+  display: none;
+}
+.react-flow__edge-path {
+  stroke: #a1a1aa;
+}
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:focus .react-flow__edge-path {
+  stroke: #18181b;
+}
+.react-flow__handle {
+  background: #18181b;
+  border: 2px solid #ffffff;
+  width: 7px;
+  height: 7px;
+}
+.react-flow__controls {
+  box-shadow: none;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  background: #ffffff;
+  border-bottom: 1px solid #f4f4f5;
+  color: #18181b;
+}
+.react-flow__controls-button:hover {
+  background: #fafafa;
+}
+.react-flow__minimap {
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+  }
+  .print-plain {
+    box-shadow: none !important;
+    border-color: #e4e4e7 !important;
+  }
+}
