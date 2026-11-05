@@ -165,6 +165,9 @@ rules with `dry_run=True` so merely opening the page never writes findings.
 
 ## Deployment
 
+A live instance is running on Render's free tier:
+**<https://traceledger-demo-web.onrender.com>**
+
 Both free-tier options proxy `/api/*` through the Next.js server, so the
 browser only ever talks to one origin and the HttpOnly session cookie stays
 first-party. No `SameSite=None` or third-party-cookie workaround is needed.

@@ -97,17 +97,26 @@ Last updated: 2026-11-05.
 - **Playwright MCP needs Chrome.** The built-in browser tooling looks for
   Chrome, which is not installed here. The suite uses the Edge channel through
   the Playwright CLI instead.
-- **No deployment has been executed.** `render.yaml` deploys both services from
-  one Blueprint, and the two-service topology was verified locally (rewrite,
-  `Set-Cookie` forwarding, session isolation), but no live URL exists yet
-  because the hosting accounts require the owner's login.
+- **Deployment is live but free-tier.** Two Render free web services
+  (`traceledger-demo-web`, `traceledger-demo-api`) from one `render.yaml`
+  Blueprint. Public entry point: <https://traceledger-demo-web.onrender.com>.
+  Free instances sleep after idle, so the first request can take ~40s while both
+  cold start, and there is no persistent disk: the SQLite file is recreated on
+  restart, so workspaces do not survive a deploy.
+- **Deploy-specific bugs that only appear on a host.** Three were found by
+  testing the live URL rather than the local one: a missing `Any` import that
+  Python 3.12 evaluates at import time (masked locally by 3.15), FastAPI's
+  trailing-slash redirect emitting an absolute internal `Location`, and
+  Next.js 308-normalizing the slash FastAPI redirects to. All three are fixed
+  and covered by `backend/tests/test_api.py` plus
+  `frontend/e2e-live/live.spec.ts`.
 
 ## Next steps
 
-1. Run the Render Blueprint deploy (or Vercel + Render), then smoke-test the
-   eight routes and cookie persistence on the live URL.
-2. Add a GitHub Actions workflow running Pytest and the Playwright suite
-   (chromium) on pull requests.
+1. Smoke-test the five remaining routes and cookie persistence on the live URL
+   after any config change (`E2E_BASE_URL=... npm run test:e2e:live`).
+2. Extend CI to run the Playwright suite (chromium) on pull requests; the
+   workflow currently covers Pytest and `next build` only.
 3. Replace `datetime.utcnow()` with timezone-aware timestamps.
 4. Add axe-core accessibility checks and a visual snapshot of the graph page.
 5. Decide whether investigation deletion should cascade findings explicitly in
