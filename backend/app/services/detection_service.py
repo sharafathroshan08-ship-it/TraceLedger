@@ -9,7 +9,7 @@ No finding here is proof of wrongdoing.
 from sqlalchemy.orm import Session as DBSession
 from ..models import Transaction, Account, Finding
 from ..schemas import FindingCreate, FindingResponse
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 from datetime import datetime, timedelta
 import json
 

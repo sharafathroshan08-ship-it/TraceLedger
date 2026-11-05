@@ -109,7 +109,8 @@ produce exactly one session. Direct navigation to `/accounts`, `/transactions`,
 
 ## What is not covered
 
-- No CI workflow yet; both suites are run locally.
+- CI runs Pytest on Python 3.12 and a Next.js production build on every push
+  (`.github/workflows/ci.yml`); the Playwright suite runs locally.
 - No accessibility automation (axe) or visual-regression snapshots.
 - No load or concurrency tests beyond session isolation.
 - The browser MCP integration in this environment needs Chrome installed; the

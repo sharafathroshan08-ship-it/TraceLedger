@@ -260,6 +260,7 @@ existing SQLite file; a fresh database simply seeds new workspaces on demand.
 
 - Anonymous sessions only; there is no login or cross-device resume.
 - Findings are heuristics, not fraud determinations.
-- No CI pipeline yet; both suites run locally.
+- CI runs Pytest on Python 3.12 and a Next.js production build on every push
+  (`.github/workflows/ci.yml`). The browser suite still runs locally.
 - `datetime.utcnow()` deprecation warnings on Python 3.12+ are known and tracked.
 - SQLite is not suitable for concurrent production traffic; use Postgres.

@@ -87,8 +87,9 @@ Last updated: 2026-11-05.
   one environment variable, but no migration covers existing SQLite data.
 - **No authentication.** Workspaces are anonymous by design; there is no login,
   password reset, or cross-device resume.
-- **No CI.** Both suites are local. A GitHub Actions workflow is the obvious
-  next step.
+- **CI covers the backend and the frontend build.** `.github/workflows/ci.yml`
+  runs Pytest on Python 3.12 (the version Render uses) and `next build`. The
+  Playwright suite still runs locally.
 - **OneDrive and `.next`.** On this machine, changing `next.config.ts` while the
   dev server runs occasionally triggers `EINVAL: readlink` on
   `.next/app-path-routes-manifest.json`. Deleting `.next` and restarting the dev
