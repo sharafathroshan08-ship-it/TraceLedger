@@ -79,7 +79,7 @@ TraceLedger/
 │   ├── api.md
 │   ├── testing.md
 │   └── progress.md
-├── render.yaml                  # Optional Render blueprint
+├── render.yaml                  # Render blueprint (frontend + API)
 └── README.md
 ```
 
@@ -163,14 +163,41 @@ rules with `dry_run=True` so merely opening the page never writes findings.
 
 ## Deployment
 
-The supported free-tier topology is a Next.js app on Vercel that proxies
-`/api/*` to FastAPI on Render. Proxying keeps the session cookie first-party, so
-no `SameSite=None` or third-party-cookie workaround is needed.
+Both free-tier options proxy `/api/*` through the Next.js server, so the
+browser only ever talks to one origin and the HttpOnly session cookie stays
+first-party. No `SameSite=None` or third-party-cookie workaround is needed.
 
-### Backend on Render
+### Option A — one click on Render (frontend + API, one URL)
 
-A `render.yaml` blueprint is included. You can use it directly, or create a
-**Web Service** manually:
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/sharafathroshan08-ship-it/TraceLedger)
+
+Or open this link directly:
+
+```
+https://render.com/deploy?repo=https://github.com/sharafathroshan08-ship-it/TraceLedger
+```
+
+1. Sign in to Render with GitHub (free, no card required).
+2. Review the two services from `render.yaml` and approve the deploy.
+3. Wait for both builds to finish, then open
+   `https://traceledger-demo-web.onrender.com`.
+
+Render's free instances sleep after ~15 minutes without traffic; the first
+request afterwards can take ~40 seconds while both services cold start. There
+is no persistent disk, so the SQLite file is recreated whenever the API
+restarts. Workspaces are re-seeded per cookie, so the demo still works, but
+edits do not survive a restart. Set `TRACELEDGER_DATABASE_URL` on the API
+service to a free Supabase Postgres database if that matters.
+
+If Render renames a service because its `onrender.com` subdomain is already
+taken, update `TRACELEDGER_API_PROXY` (web) and `TRACELEDGER_ALLOWED_ORIGINS`
+(api) to the assigned URLs.
+
+### Option B — Vercel frontend + Render API
+
+#### Backend on Render
+
+The same `render.yaml` can be used, or create a **Web Service** manually:
 
 1. Create a **Web Service** from the repository.
 2. Root directory: `backend`.
@@ -184,11 +211,7 @@ A `render.yaml` blueprint is included. You can use it directly, or create a
    - `TRACELEDGER_DATABASE_URL=postgresql+psycopg2://...` (recommended; see below)
 6. Health check path: `/api/health`.
 
-Render's free plan does not include persistent disks. With the default SQLite
-URL, the database is recreated whenever the instance restarts, so workspaces do
-not survive a deploy. Use a free Supabase Postgres database if that matters.
-
-### Frontend on Vercel
+#### Frontend on Vercel
 
 1. Import the repository, root directory `frontend`.
 2. Framework preset: Next.js. Build: `npm run build`.
@@ -221,7 +244,7 @@ existing SQLite file; a fresh database simply seeds new workspaces on demand.
 | `TRACELEDGER_ALLOWED_ORIGINS` | backend | localhost origins | CORS allow-list |
 | `TRACELEDGER_COOKIE_SECURE` | backend | `false` | Set `true` on HTTPS |
 | `NEXT_PUBLIC_API_BASE_URL` | frontend build | `http://localhost:8000` | API origin; empty = same origin |
-| `TRACELEDGER_API_PROXY` | frontend runtime | unset | Backend origin for the `/api` rewrite |
+| `TRACELEDGER_API_PROXY` | frontend build | unset | Backend origin for the `/api` rewrite |
 
 ## Documentation
 

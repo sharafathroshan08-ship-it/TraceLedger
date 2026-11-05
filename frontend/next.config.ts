@@ -2,10 +2,16 @@ import type { NextConfig } from "next";
 import path from "node:path";
 
 // Optional same-origin proxy. When TRACELEDGER_API_PROXY is set (for example
-// https://traceledger-api.onrender.com), the Next.js server forwards /api/*
-// to FastAPI and the browser never makes a cross-site request. That keeps the
-// HttpOnly session cookie first-party without needing SameSite=None.
-const apiProxy = process.env.TRACELEDGER_API_PROXY?.replace(/\/$/, "");
+// https://traceledger-demo-api.onrender.com), the Next.js server forwards
+// /api/* to FastAPI and the browser never makes a cross-site request. That
+// keeps the HttpOnly session cookie first-party without needing SameSite=None.
+//
+// A bare hostname is accepted too, so Render's `fromService` property `host`
+// can be used directly.
+const rawProxy = process.env.TRACELEDGER_API_PROXY?.trim();
+const apiProxy = rawProxy
+  ? (/^https?:\/\//i.test(rawProxy) ? rawProxy : `https://${rawProxy}`).replace(/\/$/, "")
+  : "";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,

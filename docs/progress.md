@@ -17,7 +17,7 @@ Last updated: 2026-11-05.
 | 9 | Browser tests (Playwright) | Complete — 7 passed |
 | 10 | Production build | Complete — 11 routes |
 | 11 | Documentation | Complete |
-| 12 | Deployment hardening (cookie flags, same-origin proxy) | Complete, deployed instance not yet provisioned |
+| 12 | Deployment hardening (cookie flags, same-origin proxy, one-click Render blueprint) | Complete; live instance not yet provisioned (owner login required) |
 
 ## What exists
 
@@ -96,14 +96,15 @@ Last updated: 2026-11-05.
 - **Playwright MCP needs Chrome.** The built-in browser tooling looks for
   Chrome, which is not installed here. The suite uses the Edge channel through
   the Playwright CLI instead.
-- **No deployment has been executed.** Vercel/Render/Supabase configuration is
-  documented and supported by the code, but no live URL exists yet.
+- **No deployment has been executed.** `render.yaml` deploys both services from
+  one Blueprint, and the two-service topology was verified locally (rewrite,
+  `Set-Cookie` forwarding, session isolation), but no live URL exists yet
+  because the hosting accounts require the owner's login.
 
 ## Next steps
 
-1. Provision Render (backend, persistent disk or Supabase), then Vercel
-   (frontend, `TRACELEDGER_API_PROXY` pointing at Render). Smoke-test the eight
-   routes and cookie persistence.
+1. Run the Render Blueprint deploy (or Vercel + Render), then smoke-test the
+   eight routes and cookie persistence on the live URL.
 2. Add a GitHub Actions workflow running Pytest and the Playwright suite
    (chromium) on pull requests.
 3. Replace `datetime.utcnow()` with timezone-aware timestamps.

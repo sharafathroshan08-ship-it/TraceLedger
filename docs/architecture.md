@@ -127,14 +127,17 @@ path.
 Recommended free-tier layout:
 
 ```
-Vercel (Next.js)  ──  /api/* rewrite  ──▶  Render (FastAPI + Uvicorn)
-        │                                         │
-        └──────────── browser ────────────────────┘
-                                    SQLite volume, or Supabase Postgres
+Render: Next.js web ── /api/* rewrite ──▶ Render: FastAPI web
+        │                                        │
+        └──────────── browser ───────────────────┘
+                            SQLite (ephemeral) or Supabase Postgres
 ```
 
-The `/api/*` rewrite keeps the session cookie first-party, which avoids
-`SameSite=None` and third-party-cookie blocking. `docs/api.md` documents the
+The same two-service shape works across providers (for example Vercel for the
+frontend and Render for the API); `render.yaml` deploys both on Render so the
+whole demo is one click and one URL. The `/api/*` rewrite keeps the session
+cookie first-party, which avoids `SameSite=None` and third-party-cookie
+blocking. `docs/api.md` documents the
 environment variables. The backend is stateless apart from the database, so it
 can be restarted without losing sessions as long as the database persists.
 
